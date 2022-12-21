@@ -78,8 +78,36 @@
         </el-form>
     </el-dialog>
 
+    <el-dialog
+            title="修改商品"
+            :visible.sync="dialogVisible2"
+            width="30%">
+
+        <el-form ref="form" :model="product" label-width="80px">
+            <el-form-item label="商品名称">
+                <el-input v-model="product.name"></el-input>
+            </el-form-item>
+            <el-form-item label="类别">
+                <el-input v-model="product.type"></el-input>
+            </el-form-item>
+            <el-form-item label="供应量">
+                <el-input v-model="product.ordered"></el-input>
+            </el-form-item>
+            <el-form-item label="商品描述">
+                <el-input type="textarea" v-model="product.description"></el-input>
+            </el-form-item>
+            <el-form-item label="当前状态">
+                <el-switch v-model="product.status" active-value="1" inactive-value="0"></el-switch>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="Update">提交</el-button>
+                <el-button @click="dialogVisible2 = false">取消</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+
     <!--主体表格-->
-    <template>
+
         <el-table
                 :data="tableData"
                 style="width: 100%"
@@ -122,13 +150,15 @@
             <el-table-column
                     label="操作"
                     align="center">
+                <template slot-scope="scope">
                 <el-row>
-                    <el-button type="warning" @click="dialogVisible = true">修改</el-button>
-                    <el-button type="danger">删除</el-button>
+                    <el-button type="warning" @click="UpProduct(scope.row.id)">修改</el-button>
+                    <el-button type="danger" @click="Dele(scope.row.id)">删除</el-button>
                 </el-row>
+                </template>
             </el-table-column>
         </el-table>
-    </template>
+
 
     <!--分页工具条-->
     <el-pagination
@@ -153,7 +183,6 @@
         /*页面加载结束后，发送异步请求，获取数据*/
         mounted() {
             this.selectAll();
-            alert('ok')
         },
 
         data() {
@@ -166,6 +195,7 @@
                 /*当前页码*/
                 currentPage: 1,
                 /*添加数据对话框是否展示的标记*/
+                dialogVisible2: false,
                 dialogVisible: false,
                 /*搜索表单数据*/
                 /*商品模型数据*/
@@ -205,7 +235,7 @@
         },
         methods: {
             /*查询所有数据的方法*/
-            selectAll() {
+         /*   selectAll() {
                 var self = this;
                 axios({
                     method: "get",
@@ -213,8 +243,8 @@
                 }).then(function (response) {
                     self.tableData = response.data;
                 })
-            },
-            /*selectAll() {
+            },*/
+            selectAll() {
                 var self = this;
                 axios({
                     method: "get",
@@ -223,7 +253,7 @@
                     self.tableData = response.data.rows;
                     self.totalCount = response.data.totalCount;
                 })
-            },*/
+            },
             /*selectAll() {
                 var self = this;
                 axios({
@@ -275,7 +305,78 @@
                     }
                 })
             },
+            /*修改商品*/
+            UpProduct(rid) {
+                /*console.log(this.product)*/
+                /*发送ajax异步请求，添加数据*/
+                var self = this;
 
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/kechengsheji_war/SelectByIdServlet",
+                    data: rid
+                }).then(function (response) {
+                    self.dialogVisible2 = true;
+                    self.product = response.data;
+                })
+            },
+            Update() {
+                /*console.log(this.product)*/
+                /*发送ajax异步请求，添加数据*/
+                var self = this;
+
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/kechengsheji_war/UpdateServlet",
+                    data: self.product
+                }).then(function (response) {
+                    if (response.data == "successful") {
+                        self.dialogVisible2 = false;
+                        self.selectAll();
+                        self.$message({
+                            message: '修改成功！',
+                            type: 'success'
+                        });
+
+                    }
+                })
+            },
+
+            /*删除功能*/
+            Dele(ri) {
+                /*console.log(this.product)*/
+                /*发送ajax异步请求，添加数据*/
+                this.$confirm('此操作将删除该商品, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    /*用户点击确认按钮*/
+                    var self = this;
+
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/kechengsheji_war/DeleServlet",
+                        data: ri
+                    }).then(function (response) {
+                        if (response.data == "successful") {
+                            self.selectAll();
+                            self.$message({
+                                message: '删除成功！',
+                                type: 'success'
+                            });
+
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+
+            },
             /*分页相关的两个方法*/
             handleSizeChange(val) {
                 /*console.log(`每页 ${val} 条`);*/

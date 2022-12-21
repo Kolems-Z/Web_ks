@@ -95,17 +95,28 @@ public class ProductService {
         return productPageBean;
 
     }
-    public void upDateById(int id){
+    public void upDateById(Product product){
         SqlSession sqlSession = sqlSessionFactory.openSession();
         ProductMapper mapper = sqlSession.getMapper(ProductMapper.class);
-        mapper.upDateById(id);
+        mapper.upDateById(product);
+        sqlSession.commit();
+        sqlSession.close();
     }
 
     public Product selectById(int id){
         SqlSession sqlSession = sqlSessionFactory.openSession();
         ProductMapper mapper = sqlSession.getMapper(ProductMapper.class);
         Product product = mapper.selectById(id);
+        sqlSession.close();
         return product;
+    }
+
+    public void deleteById(int id){
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        ProductMapper mapper = sqlSession.getMapper(ProductMapper.class);
+        mapper.deleteById(id);
+        sqlSession.commit();
+        sqlSession.close();
     }
 
 }

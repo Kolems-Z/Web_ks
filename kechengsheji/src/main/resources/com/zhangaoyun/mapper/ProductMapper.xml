@@ -27,6 +27,9 @@
             #{id}
         </foreach>
     </delete>
+    <delete id="deleteById">
+        delete from product where id = #{id};
+    </delete>
 
     <select id="selectAll" resultMap="ProductResultMap">
         select * from product;

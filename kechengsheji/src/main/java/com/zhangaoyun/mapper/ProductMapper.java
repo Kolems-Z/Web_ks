@@ -21,7 +21,9 @@ public interface ProductMapper {
     //查询总记录数
     int selectTotalCountByCondition(Product product);
 
-    void upDateById(int id);
+    void upDateById(Product product);
 
     Product selectById(int id);
+
+    void deleteById(int id);
 }

@@ -15,13 +15,15 @@ public class UpdateServlet extends HttpServlet {
     private ProductService productService = new ProductService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("ok");
         request.setCharacterEncoding("utf-8");
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
         System.out.println(s);
-        Integer integer = JSON.parseObject(s, Integer.class);
-        productService.upDateById(integer);
-
+        Product product = JSON.parseObject(s, Product.class);
+        System.out.println(product);
+        productService.upDateById(product);
+        response.setContentType("text/html;charset=utf-8");
         response.getWriter().write("successful");
 
     }
