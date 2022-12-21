@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册页</title>
+    <link rel="stylesheet" href="css/register.css">
+</head>
+
+<body>
+<!--<form action="/kechengsheji_war/RegisterServlet" method="post">-->
+<div id="control" class="control">
+
+    <p>注册</p>
+    <div>邮箱：<input placeholder="请输入邮箱" id="email" name="email" required v-model="email"></div>
+    <div id="check1"></div>
+    <br>
+    <div>账号：<input placeholder="请输入账号"  id="username" name="username" required v-model="username" @blur="bbb"></div>
+    <div id="check2">
+        <span>{{message}}</span>
+    </div>
+    <br>
+    <div>密码：<input placeholder="请输入密码" id="password" name="password" required v-model="password"></div>
+    <div id="check3"></div>
+    <button @click="aaa" id="btn">注册</button>
+
+</div>
+<!--</form>-->
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    var app = new Vue({
+        el: "#control",
+        data: {
+            email:'',
+            username:'',
+            password:'',
+            message:''
+        },
+        methods: {
+            aaa()
+            {
+                var _this = this;
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/kechengsheji_war/RegisterServlet?email=" + _this.email + "&username=" + _this.username + "&password=" + _this.password
+                }).then(function (response) {
+                    if (response.data==1){
+                        alert("注册成功");
+                        setTimeout(function (){
+                            location.href = "http://localhost:8080/kechengsheji_war/xiaomi.html"
+                        },1000)
+                    }else
+                    {
+                        alert("注册失败，账号已存在")
+                        setTimeout(function (){
+                            location.href = "http://localhost:8080/kechengsheji_war/html/register.html"
+                        },1000)
+                    }
+
+                    }
+                )
+            },
+            bbb()
+            {
+                var self = this;
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/kechengsheji_war/RRegisterServlet?email=" + self.email + "&username=" + self.username + "&password=" + self.password
+                }).then(function (response) {
+                        self.message = ':'+response.data
+                    }
+                )
+            }
+        }
+    })
+</script>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录页</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+
+<div id="control">
+    <form action="/kechengsheji_war/LoginServlet" method="post">
+    <p>登录</p>
+    <div>账号：<input placeholder="请输入账号" id="username" name="username" required></div>
+    <div id="check1"></div>
+    <br>
+    <div>密码：<input type="password" placeholder="请输入密码" id="password" name="password" required></div>
+    <div id="check2"></div>
+    <button id="btn" type="submit">登录</button>
+    <div class="reg"><a href="register.html">点击此处注册账号</a></div>
+    </form>
+
+
+
+</div>
+<div id="user">
+    <div id="headimg">
+        <img src="w.jpeg" alt="" width="150px" height="150px" id="img">
+    </div>
+    <div id="usn"></div>
+    <div id="eml">邮箱：</div>
+    <div id="idd">ID:</div>
+    <div class="exit">
+        <a href="login.html">退出登录</a>
+    </div>
+    <div class="change">
+        <a href="rePassword.html">更改密码</a>
+    </div>
+    <div id="dataHead">上传头像</div>
+    <div class="fBox"><input type="hidden" id="gFile">
+        <input type="hidden" value="确认" id="confirm">
+    </div>
+
+</div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+
+</script>
+<!--
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    var app = new Vue({
+        el: "#control",
+        data:{
+            statuss:'',
+            username:'',
+            password:''
+        },
+        methods: {
+            aaa() {
+                var _this = this;
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/kechengsheji_war/LoginServlet?username="+_this.username+'&password='+_this.password
+                }).then(function (response) {
+                    alert("我是个傻逼！"),
+                    _this.statuss=response.data
+                    alert(_this.statuss)
+                    this.$router.push(
+                        {
+                            //添加需要传值到那个页面的路径
+                            path:'http://localhost:8080/kechengsheji_war/xiaomi.html',
+                            //携带需要传递的参数
+                            query:{statuss:statuss}
+
+                        })
+
+
+                })
+                location.href = "http://localhost:8080/kechengsheji_war/xiaomi.html"
+            }
+    }
+    })
+</script>
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

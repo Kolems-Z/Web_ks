@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    namespace:名称空间 （可以随意取，作为坐标）（在使用mapper代理开发时，为接口全路径名，）
+-->
+<mapper namespace="com.zhangaoyun.mapper.UserMapper">
+    <resultMap id="UserResultMap" type="User">
+     <!--   <result column="brand_name" property="brandName"/>
+        <result column="company_name" property="companyName"/>-->
+    </resultMap>
+    <insert id="insertAll">
+        insert into user values(#{email},#{passId},#{passWord});
+    </insert>
+    <select id="selectAll" resultMap="UserResultMap">
+        select * from User;
+    </select>
+    <select id="selectBypassid" resultMap="UserResultMap">
+        select * from user where passId = #{passId};
+    </select>
+
+</mapper>
+

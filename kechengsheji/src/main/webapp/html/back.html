@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理系统</title>
+    <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+    </style>
+</head>
+<body>
+<!--表格-->
+<div id="app">
+    <!--搜索表单-->
+    <el-form :inline="true" :model="product" class="demo-form-inline">
+        <el-form-item label="当前状态">
+            <el-select v-model="product.status" placeholder="当前状态">
+                <el-option label="启用" value="1"></el-option>
+                <el-option label="禁用" value="0"></el-option>
+            </el-select>
+        </el-form-item>
+
+        <el-form-item label="商品名称">
+            <el-input v-model="product.name" placeholder="商品名称"></el-input>
+        </el-form-item>
+
+        <el-form-item label="类别">
+            <el-input v-model="product.type" placeholder="类别"></el-input>
+        </el-form-item>
+
+        <el-form-item>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+        </el-form-item>
+    </el-form>
+
+    <!--按钮-->
+    <el-row>
+        <el-button type="danger" plain @click="deleteByIds">批量删除</el-button>
+        <el-button type="primary" plain @click="dialogVisible = true">新增</el-button>
+    </el-row>
+
+    <!--添加数据的对话框表单-->
+    <el-dialog
+            title="编辑商品"
+            :visible.sync="dialogVisible"
+            width="30%">
+
+        <el-form ref="form" :model="product" label-width="80px">
+            <el-form-item label="商品名称">
+                <el-input v-model="product.name"></el-input>
+            </el-form-item>
+            <el-form-item label="类别">
+                <el-input v-model="product.type"></el-input>
+            </el-form-item>
+            <el-form-item label="供应量">
+                <el-input v-model="product.ordered"></el-input>
+            </el-form-item>
+            <el-form-item label="商品描述">
+                <el-input type="textarea" v-model="product.description"></el-input>
+            </el-form-item>
+            <el-form-item label="当前状态">
+                <el-switch v-model="product.status" active-value="1" inactive-value="0"></el-switch>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="addProduct">提交</el-button>
+                <el-button @click="dialogVisible = false">取消</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+
+    <!--主体表格-->
+    <template>
+        <el-table
+                :data="tableData"
+                style="width: 100%"
+                :row-class-name="tableRowClassName"
+                @selection-change="handleSelectionChange">
+            <el-table-column
+                    type="selection"
+                    width="55">
+            </el-table-column>
+            <el-table-column
+                    type="index"
+                    width="50">
+            </el-table-column>
+            <el-table-column
+                    prop="name"
+                    label="商品名称"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="type"
+                    label="类别"
+                    align="center"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="ordered"
+                    label="供应量"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="description"
+                    label="商品描述"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="status"
+                    label="当前状态"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    label="操作"
+                    align="center">
+                <el-row>
+                    <el-button type="warning" @click="dialogVisible = true">修改</el-button>
+                    <el-button type="danger">删除</el-button>
+                </el-row>
+            </el-table-column>
+        </el-table>
+    </template>
+
+    <!--分页工具条-->
+    <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[5, 10, 15, 20]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalCount">
+    </el-pagination>
+
+</div>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    var app = new Vue({
+        el: "#app",
+        /*页面加载结束后，发送异步请求，获取数据*/
+        mounted() {
+            this.selectAll();
+            alert('ok')
+        },
+
+        data() {
+            return {
+                pageSize:5,
+
+                totalCount:100,
+
+                selectedIds: [],
+                /*当前页码*/
+                currentPage: 1,
+                /*添加数据对话框是否展示的标记*/
+                dialogVisible: false,
+                /*搜索表单数据*/
+                /*商品模型数据*/
+                product: {
+                    id: '',
+                    name: '',
+                    type: '',
+                    ordered: '',
+                    status: '',
+                    description: '',
+                },
+                /*复选框选中数据集合*/
+                multipleSelection: [],
+                /*表格数据*/
+                tableData: [{
+                    name: '小米13s',
+                    type: '手机',
+                    ordered: '1000',
+                    status: '1',
+                }, {
+                    name: '小米13s',
+                    type: '手机',
+                    ordered: '1000',
+                    status: '1',
+                }, {
+                    name: '小米13s',
+                    type: '手机',
+                    ordered: '1000',
+                    status: '1',
+                }, {
+                    name: '小米13s',
+                    type: '手机',
+                    ordered: '1000',
+                    status: '1',
+                }]
+            }
+        },
+        methods: {
+            /*查询所有数据的方法*/
+            selectAll() {
+                var self = this;
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/kechengsheji_war/SelectAllPServlet"
+                }).then(function (response) {
+                    self.tableData = response.data;
+                })
+            },
+            /*selectAll() {
+                var self = this;
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/kechengsheji_war/SelectByPageServlet?currentPage="+self.currentPage+"&pageSize="+self.pageSize
+                }).then(function (response) {
+                    self.tableData = response.data.rows;
+                    self.totalCount = response.data.totalCount;
+                })
+            },*/
+            /*selectAll() {
+                var self = this;
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/kechengsheji_war/TJSelServlet?currentPage="+self.currentPage+"&pageSize="+self.pageSize,
+                    data:this.product,
+                }).then(function (response) {
+                    self.tableData = response.data.rows;
+                    self.totalCount = response.data.totalCount;
+                })
+            },*/
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+            /*复选框选中后执行的方法*/
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+            /*查询方法*/
+            onSubmit() {
+               /* console.log(this.product)*/
+                this.selectAll();
+            },
+            /*添加数据*/
+
+            addProduct() {
+                /*console.log(this.product)*/
+                /*发送ajax异步请求，添加数据*/
+                var self = this;
+
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/kechengsheji_war/AddPServlet",
+                    data: self.product
+                }).then(function (response) {
+                    if (response.data == "successful") {
+                        self.dialogVisible = false;
+                        self.selectAll();
+                        self.$message({
+                            message: '添加成功！',
+                            type: 'success'
+                        });
+
+                    }
+                })
+            },
+
+            /*分页相关的两个方法*/
+            handleSizeChange(val) {
+                /*console.log(`每页 ${val} 条`);*/
+                this.pageSize = val;
+                this.selectAll();
+            },
+            handleCurrentChange(val) {
+                /*console.log(`当前页: ${val}`);*/
+                this.currentPage = val;
+                this.selectAll();
+            },
+            deleteByIds() {
+                this.$confirm('此操作将删除该商品, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    /*用户点击确认按钮*/
+
+                    for (let i = 0; i < this.multipleSelection.length; i++) {
+                        let selectionElement = this.multipleSelection[i]
+                        this.selectedIds[i] = selectionElement.id;
+                    }
+
+                    var self = this;
+
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/kechengsheji_war/VDeletePServlet",
+                        data: self.selectedIds
+                    }).then(function (response) {
+                        if (response.data == "successful") {
+                            self.selectAll();
+                            self.$message({
+                                message: '删除成功！',
+                                type: 'success'
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+            }
+        }
+    })
+</script>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
