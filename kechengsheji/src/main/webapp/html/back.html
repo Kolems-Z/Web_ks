@@ -187,7 +187,7 @@
 
         data() {
             return {
-                pageSize:5,
+                pageSize:10,
 
                 totalCount:100,
 
@@ -244,7 +244,7 @@
                     self.tableData = response.data;
                 })
             },*/
-            selectAll() {
+            /*selectAll() {
                 var self = this;
                 axios({
                     method: "get",
@@ -253,18 +253,18 @@
                     self.tableData = response.data.rows;
                     self.totalCount = response.data.totalCount;
                 })
-            },
-            /*selectAll() {
+            },*/
+            selectAll() {
                 var self = this;
                 axios({
                     method: "post",
                     url: "http://localhost:8080/kechengsheji_war/TJSelServlet?currentPage="+self.currentPage+"&pageSize="+self.pageSize,
-                    data:this.product,
+                    data:this.product
                 }).then(function (response) {
                     self.tableData = response.data.rows;
                     self.totalCount = response.data.totalCount;
                 })
-            },*/
+            },
             tableRowClassName({row, rowIndex}) {
                 if (rowIndex === 1) {
                     return 'warning-row';
@@ -281,6 +281,10 @@
             onSubmit() {
                /* console.log(this.product)*/
                 this.selectAll();
+                this.$message({
+                    message: '查询成功！',
+                    type: 'success'
+                });
             },
             /*添加数据*/
 

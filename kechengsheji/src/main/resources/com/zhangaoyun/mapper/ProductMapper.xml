@@ -46,14 +46,14 @@
             select *
             from product
             <where>
-                <if test=" status != null and  status != ''">
-                    and status = #{ status}
+                <if test="product.status != null and product.status != ''">
+                    and status = #{product.status}
                 </if>
-                <if test=" name != null and  type != ''">
-                    and name like #{ name}
+                <if test="product.name != null and product.name != ''">
+                    and name like #{product.name}
                 </if>
-                <if test=" type != null and  type != ''">
-                    and type like #{ type}
+                <if test="product.type != null and product.type != ''">
+                    and type like #{product.type}
                 </if>
 
             </where>
@@ -68,13 +68,13 @@
         from product
         <where>
             <if test=" status != null and  status != ''">
-                and status = #{ status}
+                and status = #{status}
             </if>
             <if test=" name != null and  type != ''">
-                and name like #{ name}
+                and name like #{name}
             </if>
             <if test=" type != null and  type != ''">
-                and type like #{ type}
+                and type like #{type}
             </if>
 
         </where>

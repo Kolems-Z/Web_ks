@@ -73,7 +73,7 @@ public class ProductService {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         ProductMapper mapper = sqlSession.getMapper(ProductMapper.class);
         //计算
-        int begin = ( currentPage - 1) * pageSize;
+        int begin = (currentPage - 1) * pageSize;
         int size = pageSize;
         String name = product.getName();
         if ( name != null && name.length() > 0) {
@@ -81,7 +81,7 @@ public class ProductService {
         }
         String type = product.getType();
         if ( type != null && type.length() > 0) {
-            product.setName("%"+type+"%");
+            product.setType("%"+type+"%");
         }
         List<Product> rows = mapper.selectByPageAndCondition(begin,size,product);
         int totalCount = mapper.selectTotalCountByCondition(product);
@@ -95,6 +95,21 @@ public class ProductService {
         return productPageBean;
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public void upDateById(Product product){
         SqlSession sqlSession = sqlSessionFactory.openSession();
         ProductMapper mapper = sqlSession.getMapper(ProductMapper.class);
